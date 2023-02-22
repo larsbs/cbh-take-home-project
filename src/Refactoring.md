@@ -10,17 +10,17 @@ You will be graded on the exhaustiveness and quality of your unit tests, the dep
 
 ## Your Explanation Here
 
-The main optimizations I've made to the legibility of the code is listing the early exits of the function as soon as possible. This way, when reading the function, it's easier to know what you should keep track of and what you can forget about as you're reading the code.
+The main optimization I have made to improve code legibility is by listing the early exits of the function as soon as possible. This approach makes it easier to understand what needs to be kept track of and what can be disregarded while reading the code.
 
-For example, we check early if the event is null, so we can forget about checking it again in the rest of the code, otherwise, the function would have already returned and we wouldn't be there.
+For instance, we check if the event is null early on in the function so that we can avoid checking it repeatedly throughout the code.
 
-Also, listing the returns early helps easily visualize the different outputs of the function and let you focus only on the specific use case you're interested in. For example, if the function is returning the wrong results for when the `partitionKey` is not found, you can just focus on the `if` block that handles that case forgetting about the rest.
+Additionally, listing the returns early on in the function helps us to visualize the different outputs of the function, allowing us to focus on specific use cases that we are interested in. For instance, if the function returns incorrect results when the `partitionKey` is not found, we can concentrate on the if block that handles that case and ignore the rest of the code.
 
-Once we've made clear when and why our function exits, the rest of the refactor almost happens by itself.
+By clearly defining when and why the function exits, the remainder of the refactoring process becomes more straightforward.
 
-The rest of the refactor is focused on making clearer that a normalization of the type of the `partitionKey` to `string` exists (line 19) and that the `partitionKey` itself will be hashed if it exceeds a certain amount of characters.
+The other part of the refactoring process involves making it clear that the type of `partitionKey` is normalized to `string` (line 19) and that it will be hashed if it exceeds a certain character limit (line 25).
 
-The only "controversial" change I see here is that we could have just normalized the `partitionKey` without exiting early in case it's `null` (line 12). For example:
+The only "controversial" change I see here is that we could have normalized the `partitionKey` without exiting early even taking into account that it can be `null` (line 12). For example:
 
 ```ts
 const partitionKey = event.partitionKey == null ? JSON.stringify(event) : event.partitionKey;
@@ -36,6 +36,6 @@ const partitionKey = event.partitionKey == null
   : typeof event.partitionKey !== 'string' ? JSON.stringify(event.partitionKey) : event.partitionKey;
 ```
 
-However, even though this approach would lead to shorter code, it would not necessarily make it easier to read since it either involves a complicated nested ternary or it doesn't as clearly list what happens when the `partitionKey` is `null`. And most of the time, I prefer to optimize for reading code rather than for writing code.
+Although this approach would result in shorter code, it may not necessarily make it easier to read since it either involves a complicated nested ternary or it does not as clearly state what happens when the `partitionKey` is `null`. In most cases, I prefer to optimize for code readability rather than code length.
 
-Another thing important to mention probably, is how there are no more `let` variables, and instead, `const` has been used, so it's easier to keep track of values and assignments. We have also removed the not super appropiately named `candidate` variable.
+It is also important to mention that there are no more `let` variables used in the refactored code. Instead, `const` has been used to make it easier to keep track of values and assignments. Additionally, I have removed the variable `candidate`, which was not appropriately named.
