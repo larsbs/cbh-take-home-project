@@ -5,11 +5,12 @@
   "main": " ",
   "scripts": {
     "test": "jest",
-    "start": "node index.js"
+    "start": "node src/index.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^28.1.0"
+    "jest": "^28.1.0",
+    "prettier": "^2.8.4"
   }
 }
