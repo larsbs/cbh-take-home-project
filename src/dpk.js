@@ -4,28 +4,25 @@ exports.deterministicPartitionKey = (event) => {
   const TRIVIAL_PARTITION_KEY = '0';
   const MAX_PARTITION_KEY_LENGTH = 256;
 
-  let candidate;
-
-  if (event) {
-    if (event.partitionKey) {
-      candidate = event.partitionKey;
-    } else {
-      const data = JSON.stringify(event);
-      candidate = crypto.createHash('sha3-512').update(data).digest('hex');
-    }
+  // Hit returns early
+  if (event == null) {
+    return TRIVIAL_PARTITION_KEY;
   }
 
-  if (candidate) {
-    if (typeof candidate !== 'string') {
-      candidate = JSON.stringify(candidate);
-    }
-  } else {
-    candidate = TRIVIAL_PARTITION_KEY;
+  if (event.partitionKey == null) {
+    // We don't need to check for size here since this will always return an appropiately sized
+    // partition key.
+    return crypto.createHash('sha3-512').update(JSON.stringify(event)).digest('hex');
   }
 
-  if (candidate.length > MAX_PARTITION_KEY_LENGTH) {
-    candidate = crypto.createHash('sha3-512').update(candidate).digest('hex');
-  }
+  // Normalize partition key
+  const partitionKey =
+    typeof event.partitionKey !== 'string'
+      ? JSON.stringify(event.partitionKey)
+      : event.partitionKey;
 
-  return candidate;
+  // If partitionKey is too long, hash it. Otherwise, just return it
+  return partitionKey.length > MAX_PARTITION_KEY_LENGTH
+    ? crypto.createHash('sha3-512').update(partitionKey).digest('hex')
+    : partitionKey;
 };

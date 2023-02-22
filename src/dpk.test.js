@@ -8,7 +8,7 @@ describe('deterministicPartitionKey', () => {
   });
 
   describe("When no 'partitionKey' is found in the event", () => {
-    it("Returns a hash of the stringified input if no 'partitionKey' is found in the event", () => {
+    it('Returns a hash of the stringified input', () => {
       const hashKeyString = deterministicPartitionKey('string');
       const hashKeyInteger = deterministicPartitionKey(1);
       const hashKeyObject = deterministicPartitionKey({});
